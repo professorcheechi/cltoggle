@@ -1,0 +1,95 @@
+#!/bin/bash
+
+#/////////////////////////////////////////////////#
+#v1.0 functional
+#v1.1 built case
+#v1.2 usage & check for setxkbmap
+#/////////////////////////////////////////////////#
+
+#/////////////////////////////////////////////////#
+#                                                 #
+# NOTES                                           #
+#                                                 #
+#/////////////////////////////////////////////////#
+#
+# all rules can be found at /usr/share/X11/xkb/rules/base.lst
+# 
+# the following command
+#
+# setxkbmap -option   
+#
+# just undoes any mapping and shouldn't be necessary
+# 
+# however option 0 does not work without it
+# simplest (and may help if this is expanded later) to include in each case
+#
+# todo 
+# automate installation of setxkbmap if not found ?
+#
+#/////////////////////////////////////////////////#
+# END NOTES                                       #
+#/////////////////////////////////////////////////#
+
+
+#/////////////////////////////////////////////////#
+#                                                 #
+# FUNCTIONS                                       #
+#                                                 #
+#/////////////////////////////////////////////////#
+
+usage() {
+    if [ -z "$(which setxkbmap)" ]; then
+        printf "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        printf "\n!! cltoggle requires setxkbmap, please install with your preferred package manager if not present     !!"
+        printf "\n!! Or if you have an alternative installed, please create a link in your \$PATH to it named setxkbmap !!"
+        printf "\n!! Typically it will be located at /usr/bin/setxkbmap                                                 !!"
+        printf "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n"
+    fi
+
+    printf "\nUsage: \n\ncltoggle 1 Remap Caps Lock key to Left CTRL\n "
+    printf "\ncltoggle 0 Change back to normal Caps Lock function\n\n"
+    exit 1
+}
+
+toggle() {
+    case "$1" in
+        ###################################
+        # remap caps as left ctrl         #
+        ###################################
+        1) 
+            setxkbmap -option
+            setxkbmap -option ctrl:nocaps
+            printf "Caps Lock key will now act as Left CTRL\n" ;;
+        ####################################
+        # set caps lock back to caps lock  #
+        ####################################
+        0) 
+            setxkbmap -option
+            setxkbmap -option caps:capslock
+            printf "Caps Lock key will now act as Caps Lock\n" ;;
+        *) usage ;;
+    esac
+    exit 0
+}
+
+#/////////////////////////////////////////////////#
+# END FUNCTIONS                                   #
+#/////////////////////////////////////////////////#
+
+
+#/////////////////////////////////////////////////#
+#                                                 #
+# MAIN                                            #
+#                                                 #
+#/////////////////////////////////////////////////#
+
+if [ -z "$1" ] || [ -z "$(which setxkbmap)" ] || [ -n "$2" ]; then
+    usage
+fi
+
+toggle $1
+
+#/////////////////////////////////////////////////#
+# END MAIN                                        #
+#/////////////////////////////////////////////////#
+
